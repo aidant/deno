@@ -6,7 +6,11 @@ use deno_core::op2;
 use deno_core::OpState;
 use deno_core::ResourceId;
 use std::ffi::c_void;
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(
+  target_os = "linux",
+  target_os = "macos",
+  target_os = "android"
+))]
 use std::ptr::NonNull;
 
 use crate::surface::WebGpuSurface;
@@ -138,6 +142,30 @@ fn raw_window(
   } else {
     return Err(type_error("Invalid system on Linux"));
   }
+
+  Ok((win_handle, display_handle))
+}
+
+#[cfg(target_os = "android")]
+fn raw_window(
+  system: &str,
+  a_native_window: *const c_void,
+  _p2: *const c_void,
+) -> Result<RawHandles, AnyError> {
+  if system != "window_manager" {
+    return Err(type_error("Invalid system on Android"));
+  }
+
+  let win_handle = raw_window_handle::RawWindowHandle::AndroidNdk(
+    raw_window_handle::AndroidNdkWindowHandle::new(
+      NonNull::new(a_native_window as *mut c_void)
+        .ok_or(type_error("a_native_window is null"))?,
+    ),
+  );
+
+  let display_handle = raw_window_handle::RawDisplayHandle::Android(
+    raw_window_handle::AndroidDisplayHandle::new(),
+  );
 
   Ok((win_handle, display_handle))
 }
