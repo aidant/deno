@@ -832,19 +832,20 @@ declare namespace Deno {
    *
    *  The parameters correspond to the table below:
    *
-   *  | system            | winHandle     | displayHandle   |
-   *  | ----------------- | ------------- | --------------- |
-   *  | "cocoa" (macOS)   | `NSView*`     | -               |
-   *  | "win32" (Windows) | `HWND`        | `HINSTANCE`     |
-   *  | "x11" (Linux)     | Xlib `Window` | Xlib `Display*` |
-   *  | "wayland" (Linux) | `wl_surface*` | `wl_display*`   |
+   *  | system                     | winHandle       | displayHandle   |
+   *  | -------------------------- | --------------- | --------------- |
+   *  | "cocoa" (macOS)            | `NSView*`       | -               |
+   *  | "win32" (Windows)          | `HWND`          | `HINSTANCE`     |
+   *  | "x11" (Linux)              | Xlib `Window`   | Xlib `Display*` |
+   *  | "wayland" (Linux)          | `wl_surface*`   | `wl_display*`   |
+   *  | "window_manager" (Android) | `ANativeWindow` | -               |
    *
    * @category GPU
    * @experimental
    */
   export class UnsafeWindowSurface {
     constructor(
-      system: "cocoa" | "win32" | "x11" | "wayland",
+      system: "cocoa" | "win32" | "x11" | "wayland" | "window_manager",
       windowHandle: Deno.PointerValue<unknown>,
       displayHandle: Deno.PointerValue<unknown>,
     );

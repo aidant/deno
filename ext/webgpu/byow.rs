@@ -10,7 +10,8 @@ use std::ffi::c_void;
   target_os = "linux",
   target_os = "macos",
   target_os = "freebsd",
-  target_os = "openbsd"
+  target_os = "openbsd",
+  target_os = "android"
 ))]
 use std::ptr::NonNull;
 
@@ -147,4 +148,44 @@ fn raw_window(
   }
 
   Ok((win_handle, display_handle))
+}
+
+#[cfg(target_os = "android")]
+fn raw_window(
+  system: &str,
+  a_native_window: *const c_void,
+  _p2: *const c_void,
+) -> Result<RawHandles, AnyError> {
+  if system != "window_manager" {
+    return Err(type_error("Invalid system on Android"));
+  }
+
+  let win_handle = raw_window_handle::RawWindowHandle::AndroidNdk(
+    raw_window_handle::AndroidNdkWindowHandle::new(
+      NonNull::new(a_native_window as *mut c_void)
+        .ok_or(type_error("a_native_window is null"))?,
+    ),
+  );
+
+  let display_handle = raw_window_handle::RawDisplayHandle::Android(
+    raw_window_handle::AndroidDisplayHandle::new(),
+  );
+
+  Ok((win_handle, display_handle))
+}
+
+#[cfg(not(any(
+  target_os = "macos",
+  target_os = "windows",
+  target_os = "linux",
+  target_os = "freebsd",
+  target_os = "openbsd",
+  target_os = "android",
+)))]
+fn raw_window(
+  _system: &str,
+  _window: *const c_void,
+  _display: *const c_void,
+) -> Result<RawHandles, AnyError> {
+  Err(type_error("Unsupported platform"))
 }
