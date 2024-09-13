@@ -8,7 +8,6 @@ pub use deno_core;
 pub use deno_cron;
 pub use deno_crypto;
 pub use deno_fetch;
-pub use deno_ffi;
 pub use deno_fs;
 pub use deno_http;
 pub use deno_io;
@@ -64,11 +63,6 @@ pub static UNSTABLE_GRANULAR_FLAGS: &[(
     deno_cron::UNSTABLE_FEATURE_NAME,
     "Enable unstable Deno.cron API",
     2,
-  ),
-  (
-    deno_ffi::UNSTABLE_FEATURE_NAME,
-    "Enable unstable FFI APIs",
-    3,
   ),
   (
     deno_fs::UNSTABLE_FEATURE_NAME,
