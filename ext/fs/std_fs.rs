@@ -76,6 +76,16 @@ impl FileSystem for RealFs {
     {
       Ok(r.bits() as u32)
     }
+    #[cfg(not(any(
+      target_os = "android",
+      target_os = "linux",
+      target_os = "macos",
+      target_os = "openbsd",
+      target_os = "freebsd"
+    )))]
+    {
+      Err(FsError::NotSupported)
+    }
   }
 
   fn open_sync(
